@@ -65,18 +65,14 @@ class RingHighwayNetwork(Network):
         edgelen = length / 4.
 
         cr = net_params.additional_params["connection_radius"]
-        top_x = 0
-        top_y = r
         merge_length = net_params.additional_params["merge_length"]
         merge_theta = ((length/4 - merge_length) / length) * 2 * pi
-        merge_x = -r * cos(merge_theta)
-        merge_y = -r * sin(merge_theta)
 
         conn_Ox = sqrt(power(cr, 2) - power(r, 2))
         conn_theta = arccos(conn_Ox / cr)
-        conn_arc_len = 2 * pi * cr * conn_theta
-        conn_arc_begin = pi - (conn_theta)
-        conn_arc_end = pi + (conn_theta)
+        conn_arc_len = cr * (conn_theta + 1)
+        conn_arc_begin = pi - (conn_theta + 0.05)
+        conn_arc_end = pi + (merge_theta)
 
         merge_phi = (merge_length / length) * 2 * pi
 
@@ -127,12 +123,11 @@ class RingHighwayNetwork(Network):
           "type": "connectionType",
           "from": "top",
           "to": "merge",
-          # "length": conn_arc_len,
-          "length": sqrt(power((top_x - merge_x), 2) + power((top_y - merge_y), 2))
-          # "shape": [
-          #   (cr * cos(t) + conn_Ox, cr * sin(t))
-          #   for t in linspace(conn_arc_begin, conn_arc_end, resolution)
-          # ]
+          "length": conn_arc_len,
+          "shape": [
+            (cr * cos(t) + conn_Ox - 20, cr * sin(t) - 3)
+            for t in linspace(conn_arc_begin, conn_arc_end, resolution)
+          ]
         }, {
           "id": "merge",
           "type": "mergeType",
@@ -209,6 +204,26 @@ class RingHighwayNetwork(Network):
           "to": "bottom",
           "fromLane": "0",
           "toLane": "0"
+        }, {
+          "from": "right",
+          "to": "connect",
+          "fromLane": "2",
+          "toLane": "0"
+        }, {
+          "from": "right",
+          "to": "top",
+          "fromLane": "2",
+          "toLane": "2"
+        }, {
+          "from": "right",
+          "to": "top",
+          "fromLane": "1",
+          "toLane": "1"
+        }, {
+          "from": "right",
+          "to": "top",
+          "fromLane": "0",
+          "toLane": "0"
         }]
 
         return connections
@@ -234,6 +249,9 @@ class RingHighwayNetwork(Network):
           "merge": [
             (["merge", "bottom", "right", "top", "left"], 0.8),
             (["merge", "bottom", "right", "connect"], 0.2)
+          ],
+          "connect": [
+            (["connect", "merge", "bottom", "right"], 1.0)
           ]
         }
 
@@ -243,12 +261,18 @@ class RingHighwayNetwork(Network):
         ring_length = self.net_params.additional_params["length"]
         junction_length = 0.1
 
+        # edgestarts = [("bottom", 0),
+        #               ("right", 0.16 * ring_length + junction_length),
+        #               ("top", 0.32 * ring_length + 2 * junction_length),
+        #               ("left", 0.48 * ring_length + 3 * junction_length),
+        #               ("connect", 0.64 * ring_length + 4 * junction_length),
+        #               ("merge", 0.80 * ring_length + 5 * junction_length)]
         edgestarts = [("bottom", 0),
-                      ("right", 0.16 * ring_length + junction_length),
-                      ("top", 0.32 * ring_length + 2 * junction_length),
-                      ("left", 0.48 * ring_length + 3 * junction_length),
-                      ("connect", 0.64 * ring_length + 4 * junction_length),
-                      ("merge", 0.80 * ring_length + 5 * junction_length)]
+                      ("right", 0),
+                      ("top", 0),
+                      ("left", 0),
+                      ("connect", 0),
+                      ("merge", 0)]
 
         return edgestarts
 
