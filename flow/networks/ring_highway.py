@@ -9,11 +9,11 @@ ADDITIONAL_NET_PARAMS = {
   "speed_limit": 100,
   "resolution": 40,
   "connection_radius": 320,
-  "merge_length": 200,
+  "merge_length": 200
 }
 
 # length of vehicles in the network, in meters
-VEHICLE_LENGTH = 5
+VEHICLE_LENGTH = 4
 
 class RingHighwayNetwork(Network):
     def __init__(self,
@@ -257,35 +257,60 @@ class RingHighwayNetwork(Network):
 
         return rts
 
-    def specify_edge_starts(self):
-        ring_length = self.net_params.additional_params["length"]
-        junction_length = 0.1
+    # def specify_edge_starts(self):
+    #     ring_length = self.net_params.additional_params["length"]
+    #     junction_length = 0.1
 
-        # edgestarts = [("bottom", 0),
-        #               ("right", 0.16 * ring_length + junction_length),
-        #               ("top", 0.32 * ring_length + 2 * junction_length),
-        #               ("left", 0.48 * ring_length + 3 * junction_length),
-        #               ("connect", 0.64 * ring_length + 4 * junction_length),
-        #               ("merge", 0.80 * ring_length + 5 * junction_length)]
-        edgestarts = [("bottom", 0),
-                      ("right", 0),
-                      ("top", 0),
-                      ("left", 0),
-                      ("connect", 0),
-                      ("merge", 0)]
+    #     # edgestarts = [("bottom", 0),
+    #     #               ("right", 0.16 * ring_length + junction_length),
+    #     #               ("top", 0.32 * ring_length + 2 * junction_length),
+    #     #               ("left", 0.48 * ring_length + 3 * junction_length),
+    #     #               ("connect", 0.64 * ring_length + 4 * junction_length),
+    #     #               ("merge", 0.80 * ring_length + 5 * junction_length)]
+    #     edgestarts = [("bottom", 0),
+    #                   ("right", 0),
+    #                   ("top", 0),
+    #                   ("left", 0),
+    #                   ("connect", 0),
+    #                   ("merge", 0)]
 
-        return edgestarts
+    #     return edgestarts
 
-    def specify_internal_edge_starts(self):
-        """See parent class."""
-        ring_length = self.net_params.additional_params["length"]
-        junction_length = 0.1  # length of inter-edge junctions
+    # def specify_internal_edge_starts(self):
+    #     """See parent class."""
+    #     ring_length = self.net_params.additional_params["length"]
+    #     junction_length = 0.1  # length of inter-edge junctions
 
-        edgestarts = [(":right_0", 0.16 * ring_length),
-                      (":top_0", 0.32 * ring_length + junction_length),
-                      (":left_0", 0.48 * ring_length + 2 * junction_length),
-                      (":bottom_0", 0.64 * ring_length + 3 * junction_length),
-                      (":connect_0", 0.8 *ring_length + 4 * junction_length),
-                      (":merge_0", ring_length + 5 * junction_length)]
+    #     edgestarts = [(":right_0", 0.16 * ring_length),
+    #                   (":top_0", 0.32 * ring_length + junction_length),
+    #                   (":left_0", 0.48 * ring_length + 2 * junction_length),
+    #                   (":bottom_0", 0.64 * ring_length + 3 * junction_length),
+    #                   (":connect_0", 0.8 *ring_length + 4 * junction_length),
+    #                   (":merge_0", ring_length + 5 * junction_length)]
 
-        return edgestarts
+    #     return edgestarts
+
+    @staticmethod
+    def gen_custom_start_pos(cls, net_params, initial_config, num_vehicles):
+
+      (x0, min_gap, bunching, lanes_distr, available_length, available_edges, initial_config) = cls._get_start_pos_util(initial_config, num_vehicles)
+
+      length = net_params.additional_params["length"]
+      lanes = [0, 1, 2]
+      edges = {'bottom': 500, 'right': 500, 'top': 500, 'left': 300, 'merge':200}
+      increment = 40
+
+      car_count = 0
+      startpositions, startlanes = [], []
+
+      for edge, e_len in edges.items():
+        x = 0
+        while x < e_len:
+          for lane in lanes:
+            if car_count > num_vehicles: break
+            startpositions.append((edge, x))
+            startlanes.append(lane)
+            car_count += 1
+          x += 40
+
+      return startpositions, startlanes
