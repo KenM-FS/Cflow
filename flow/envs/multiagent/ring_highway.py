@@ -128,20 +128,20 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
 
     rewards = {}
     # reward by average velocity of all vehicles
-    eta_1 = 4
+    eta_1 = 1
     reward_global = np.mean(vel) * eta_1
     ## punish accelerations (should lead to reduce stop-and-go wave)
-    eta_2 = 2
-    accel_action = 0
-    if len(rl_actions) > 0:
-      accel_action = np.array(list(rl_actions.values()))[:, 0]
-    mean_actions = np.mean(np.abs(accel_action))
-    accel_threshold = 0
-    if mean_actions > accel_threshold:
-      reward_global += eta_2 * (accel_threshold - mean_actions)
+    # eta_2 = 2
+    # accel_action = 0
+    # if len(rl_actions) > 0:
+    #   accel_action = np.array(list(rl_actions.values()))[:, 0]
+    # mean_actions = np.mean(np.abs(accel_action))
+    # accel_threshold = 0
+    # if mean_actions > accel_threshold:
+    #   reward_global += eta_2 * (accel_threshold - mean_actions)
 
     # reward by target velocity of each agent
-    eta_3 = 4
+    eta_3 = 1
     for rl_id in self.k.vehicle.get_rl_ids():
       edge = self.k.vehicle.get_edge(rl_id)
       speed_limit = self.k.network.speed_limit(edge)

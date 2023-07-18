@@ -23,6 +23,6 @@ __all__ = [
     'MultiAgentWaveAttenuationPOEnv',
     'MultiAgentMergePOEnv',
     'I210MultiEnv',
-    'MultiAgentRingHighwayPOEnv',
+    'MultiAgentRingHighwayPOCommEnv',
     'MultiAgentRingHighwayPONcomEnv'
 ]
