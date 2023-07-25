@@ -146,7 +146,7 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
       edge = self.k.vehicle.get_edge(rl_id)
       speed_limit = self.k.network.speed_limit(edge)
       speed = self.k.vehicle.get_speed(rl_id)
-      rewards[rl_id] = max((speed/speed_limit)*100 + reward_global, 0) * eta_3
+      rewards[rl_id] = max(reward_global + (speed/speed_limit)*100*eta_3, 0)
 
     return rewards
 class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
