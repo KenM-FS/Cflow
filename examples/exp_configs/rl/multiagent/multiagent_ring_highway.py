@@ -7,6 +7,12 @@ from flow.utils.registry import make_create_env
 from ray.tune.registry import register_env
 from ray.rllib.agents.ppo.ppo_policy import PPOTFPolicy
 
+"""
+python flow/examples/train_rllib.py multiagent_ring_highway --num_steps=500
+"""
+EXP_TAG = "test"
+VERSION = 1
+
 HORIZON = 1000
 N_CPUS = 1
 N_ROLLOUTS = 1
@@ -28,7 +34,7 @@ vehicles.add(
 )
 
 flow_params = dict(
-    exp_tag="test_learn_from_py",
+    exp_tag=EXP_TAG,
     env_name=MultiAgentRingHighwayPOCommEnv,
     network=RingHighwayNetwork,
     simulator='traci',
@@ -53,7 +59,7 @@ flow_params = dict(
     initial=InitialConfig(spacing="uniform", perturbation=1),
 )
 
-create_env, env_name = make_create_env(params=flow_params, version=0)
+create_env, env_name = make_create_env(params=flow_params, version=VERSION)
 register_env(env_name, create_env)
 
 test_env = create_env()
