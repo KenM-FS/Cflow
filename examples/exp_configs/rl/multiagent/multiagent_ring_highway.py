@@ -10,7 +10,7 @@ from ray.rllib.agents.ppo.ppo_policy import PPOTFPolicy
 """
 python flow/examples/train_rllib.py multiagent_ring_highway --num_steps=500
 """
-EXP_TAG = "test"
+EXP_TAG = "less_lane_change"
 VERSION = 1
 
 HORIZON = 1000

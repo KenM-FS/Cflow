@@ -141,7 +141,7 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
     #   reward_global += eta_2 * (accel_threshold - mean_actions)
 
     # reward by target velocity of each agent
-    eta_3 = 1
+    eta_3 = 2
     for rl_id in self.k.vehicle.get_rl_ids():
       edge = self.k.vehicle.get_edge(rl_id)
       speed_limit = self.k.network.speed_limit(edge)
