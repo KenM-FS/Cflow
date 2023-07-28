@@ -11,7 +11,8 @@ from ray.rllib.agents.ppo.ppo_policy import PPOTFPolicy
 python3 flow/examples/train.py multiagent_ring_highway --num_steps=500
 """
 EXP_TAG = "less_lane_change"
-VERSION = 1
+VERSION = 2
+RENDER = False
 
 HORIZON = 1000
 N_CPUS = 1
@@ -40,7 +41,7 @@ flow_params = dict(
     simulator='traci',
     sim=SumoParams(
         sim_step=0.1,
-        render=False,
+        render=RENDER,
     ),
     env=EnvParams(
         horizon=HORIZON,

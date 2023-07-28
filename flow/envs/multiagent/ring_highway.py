@@ -49,13 +49,13 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
         shape=(1,),
         dtype=np.float32
       ),
-      # Discrete(3)
-      Box(
-        low=0,
-        high=2,
-        shape=(1,),
-        dtype=np.int8
-      )
+      Discrete(3)
+      # Box(
+      #   low=0,
+      #   high=2,
+      #   shape=(1,),
+      #   dtype=np.int8 # this will be float32, so not working
+      # )
     ))
 
 
