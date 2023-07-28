@@ -103,7 +103,8 @@ def setup_exps_rllib(flow_params,
                      n_rollouts,
                      policy_graphs=None,
                      policy_mapping_fn=None,
-                     policies_to_train=None):
+                     policies_to_train=None,
+                     version=0):
     """Return the relevant components of an RLlib experiment.
 
     Parameters
@@ -170,7 +171,7 @@ def setup_exps_rllib(flow_params,
     if policies_to_train is not None:
         config['multiagent'].update({'policies_to_train': policies_to_train})
 
-    create_env, gym_name = make_create_env(params=flow_params)
+    create_env, gym_name = make_create_env(params=flow_params, version=version)
 
     # Register as rllib env
     register_env(gym_name, create_env)
@@ -185,13 +186,14 @@ def train_rllib(submodule, flags):
     flow_params = submodule.flow_params
     n_cpus = submodule.N_CPUS
     n_rollouts = submodule.N_ROLLOUTS
+    version = submodule.VERSION
     policy_graphs = getattr(submodule, "POLICY_GRAPHS", None)
     policy_mapping_fn = getattr(submodule, "policy_mapping_fn", None)
     policies_to_train = getattr(submodule, "policies_to_train", None)
 
     alg_run, gym_name, config = setup_exps_rllib(
         flow_params, n_cpus, n_rollouts,
-        policy_graphs, policy_mapping_fn, policies_to_train)
+        policy_graphs, policy_mapping_fn, policies_to_train, version)
 
     ray.init(num_cpus=n_cpus + 1, object_store_memory=200 * 1024 * 1024)
     exp_config = {
@@ -200,7 +202,7 @@ def train_rllib(submodule, flags):
         "config": {
             **config
         },
-        "checkpoint_freq": 20,
+        "checkpoint_freq": 5,
         "checkpoint_at_end": True,
         "max_failures": 999,
         "stop": {
