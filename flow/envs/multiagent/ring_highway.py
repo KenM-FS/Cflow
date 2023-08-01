@@ -130,25 +130,37 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
     # reward by average velocity of all vehicles
     eta_1 = 1
     reward_global = np.mean(vel) * eta_1
-    ## punish accelerations (should lead to reduce stop-and-go wave)
-    # eta_2 = 2
-    # accel_action = 0
-    # if len(rl_actions) > 0:
-    #   accel_action = np.array(list(rl_actions.values()))[:, 0]
-    # mean_actions = np.mean(np.abs(accel_action))
-    # accel_threshold = 0
-    # if mean_actions > accel_threshold:
-    #   reward_global += eta_2 * (accel_threshold - mean_actions)
 
-    # reward by target velocity of each agent
+    # reward and penalty for each vehicle
+    eta_2 = 1
     eta_3 = 2
+    steps_from_last_lane_change = 0
     for rl_id in self.k.vehicle.get_rl_ids():
+      reward_local = 0
+
+      # reward by percentage of own velocity to the speed limit
       edge = self.k.vehicle.get_edge(rl_id)
       speed_limit = self.k.network.speed_limit(edge)
       speed = self.k.vehicle.get_speed(rl_id)
-      rewards[rl_id] = max(reward_global + (speed/speed_limit)*100*eta_3, 0)
+      percentage = (speed / speed_limit) * 100
+      reward_local += percentage * eta_3
+
+      # punish lane change action within 500 steps from last lane change
+      penalty = 0
+      lane_change_action = rl_actions[rl_id][1]
+      if lane_change_action != 0 and steps_from_last_lane_change < 500:
+        penalty = 20
+        steps_from_last_lane_change = 0
+      elif lane_change_action != 0:
+        steps_from_last_lane_change = 0
+      else:
+        steps_from_last_lane_change += 1
+      reward_local -= penalty * eta_2
+
+      rewards[rl_id] = max(reward_global + reward_local, 0)
 
     return rewards
+
 class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
 
   def __init__(self, env_params, sim_params, network, simulator='traci'):
