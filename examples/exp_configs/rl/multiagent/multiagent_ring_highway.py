@@ -1,4 +1,5 @@
 from flow.envs.multiagent import MultiAgentRingHighwayPOCommEnv
+from flow.envs.multiagent import MultiAgentRingHighwayPONcomEnv
 from flow.networks import RingHighwayNetwork
 from flow.networks.ring_highway import ADDITIONAL_NET_PARAMS
 from flow.core.params import SumoParams, EnvParams, NetParams, VehicleParams, InitialConfig, SumoLaneChangeParams
@@ -13,6 +14,8 @@ python3 flow/examples/train.py multiagent_ring_highway --num_steps=500
 EXP_TAG = "less_lane_change"
 VERSION = 4
 RENDER = False
+ENV_NAME = MultiAgentRingHighwayPOCommEnv
+# ENV_NAME = MultiAgentRingHighwayPONcomEnv
 
 HORIZON = 1000
 N_CPUS = 1
@@ -36,7 +39,7 @@ vehicles.add(
 
 flow_params = dict(
     exp_tag=EXP_TAG,
-    env_name=MultiAgentRingHighwayPOCommEnv,
+    env_name=ENV_NAME,
     network=RingHighwayNetwork,
     simulator='traci',
     sim=SumoParams(
