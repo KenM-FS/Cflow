@@ -231,27 +231,23 @@ class RingHighwayNetwork(Network):
     def specify_routes(self, net_params):
         rts = {
           "bottom": [
-            (["bottom", "right", "top", "left", "merge"], 0.8),
-            (["bottom", "right", "connect", "merge"], 0.2)
+            (["bottom", "right"], 1.0)
           ],
           "right": [
-            (["right", "top", "left", "merge", "bottom"], 0.8),
-            (["right", "connect", "merge", "bottom"], 0.2)
+            (["right", "top"], 0.7),
+            (["right", "connect"], 0.3)
           ],
           "top": [
-            (["top", "left", "merge", "bottom", "right"], 0.8),
-            (["top", "left", "merge", "bottom", "right", "connect"], 0.2)
+            (["top", "left"], 1.0)
           ],
           "left": [
-            (["left", "merge", "bottom", "right", "top"], 0.8),
-            (["left", "merge", "bottom", "right", "connect"], 0.2)
+            (["left", "merge"], 1.0)
           ],
           "merge": [
-            (["merge", "bottom", "right", "top", "left"], 0.8),
-            (["merge", "bottom", "right", "connect"], 0.2)
+            (["merge", "bottom"], 1.0)
           ],
           "connect": [
-            (["connect", "merge", "bottom", "right"], 1.0)
+            (["connect", "merge"], 1.0)
           ]
         }
 

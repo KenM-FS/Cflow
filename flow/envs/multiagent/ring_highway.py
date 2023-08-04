@@ -36,7 +36,8 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
       Box(low=-float('inf'), high=float('inf'), shape=(4,)),
       Box(low=-float('inf'), high=float('inf'), shape=(4,)),
       Box(low=-float('inf'), high=float('inf'), shape=(4,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,))
+      Box(low=-float('inf'), high=float('inf'), shape=(4,)),
+      Discrete(2) # bool whether a vehicle forks at next edge, 0:no 1:yes
     ))
     return obs_space
 
@@ -101,12 +102,18 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
       elif follower_velocity.shape == (1,):
         follower_velocity = np.append(follower_velocity, np.array([0., 0., 0.], dtype=np.float32))
 
+      is_fork_at_next_edge = 0
+      routes = self.k.vehicle.get_route(rl_id)
+      if routes[-1] == 'connect':
+        is_fork_at_next_edge = 1
+
       observation = [
         np.array([speed / speed_limit], dtype=np.float32),
         headway.copy(),
         leader_velocity.copy(),
         tailway.copy(),
-        follower_velocity.copy()
+        follower_velocity.copy(),
+        is_fork_at_next_edge
       ]
       obs.update({rl_id: observation})
 
@@ -128,7 +135,7 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
 
     rewards = {}
     # reward by average velocity of all vehicles
-    eta_1 = 0.5
+    eta_1 = 1
     reward_global = np.mean(vel) * eta_1
 
     # reward and penalty for each vehicle
@@ -187,6 +194,7 @@ class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
       Box(low=-float('inf'), high=float('inf'), shape=(4,)),
       Box(low=-float('inf'), high=float('inf'), shape=(4,)),
       Box(low=-float('inf'), high=float('inf'), shape=(4,)),
+      Discrete(2), # bool whether a vehicle forks at next edge, 0:no 1:yes
       Tuple((basic_obs,) * self.initial_vehicles.num_rl_vehicles)
     ))
     return obs_space
@@ -245,12 +253,18 @@ class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
       elif follower_velocity.shape == (1,):
         follower_velocity = np.append(follower_velocity, np.array([0., 0., 0.], dtype=np.float32))
 
+      is_fork_at_next_edge = 0
+      routes = self.k.vehicle.get_route(rl_id)
+      if routes[-1] == 'connect':
+        is_fork_at_next_edge = 1
+
       observation = [
         np.array([speed / speed_limit], dtype=np.float32),
         headway.copy(),
         leader_velocity.copy(),
         tailway.copy(),
-        follower_velocity.copy()
+        follower_velocity.copy(),
+        is_fork_at_next_edge
       ]
       obs.update({rl_id: observation})
 
@@ -274,7 +288,7 @@ class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
       count = 0
       for comm_id, v in comm_matrix[rl_id].items():
         if v == 1:
-          comm_info[count] = tuple(obs[comm_id].copy())
+          comm_info[count] = tuple(obs[comm_id][:-1].copy())
         count += 1
       state.append(tuple(comm_info.copy()))
       states[rl_id] = tuple(state.copy())
