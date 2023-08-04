@@ -13,6 +13,7 @@ python3 flow/examples/train.py multiagent_ring_highway --num_steps=500
 """
 EXP_TAG = "test_run"
 VERSION = 1
+RENDER = False
 ENV_NAME = MultiAgentRingHighwayPOCommEnv
 # ENV_NAME = MultiAgentRingHighwayPONcomEnv
 
@@ -43,7 +44,7 @@ flow_params = dict(
     simulator='traci',
     sim=SumoParams(
         sim_step=0.1,
-        render=False,
+        render=RENDER,
     ),
     env=EnvParams(
         horizon=HORIZON,
