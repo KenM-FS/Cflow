@@ -135,7 +135,7 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
 
     rewards = {}
     # reward by average velocity of all vehicles
-    eta_1 = 1
+    eta_1 = 0.5
     reward_global = np.mean(vel) * eta_1
 
     # reward and penalty for each vehicle
