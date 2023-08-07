@@ -102,10 +102,11 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
       elif follower_velocity.shape == (1,):
         follower_velocity = np.append(follower_velocity, np.array([0., 0., 0.], dtype=np.float32))
 
-      is_fork_at_next_edge = 0
+      is_movable_to_next_edge = 1
       routes = self.k.vehicle.get_route(rl_id)
-      if routes[-1] == 'connect':
-        is_fork_at_next_edge = 1
+      lane = self.k.vehicle.get_lane(rl_id)
+      if routes[-1] == 'connect' and lane != 2:
+        is_movable_to_next_edge = 0
 
       observation = [
         np.array([speed / speed_limit], dtype=np.float32),
@@ -113,7 +114,7 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
         leader_velocity.copy(),
         tailway.copy(),
         follower_velocity.copy(),
-        is_fork_at_next_edge
+        is_movable_to_next_edge,
       ]
       obs.update({rl_id: observation})
 
@@ -253,10 +254,11 @@ class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
       elif follower_velocity.shape == (1,):
         follower_velocity = np.append(follower_velocity, np.array([0., 0., 0.], dtype=np.float32))
 
-      is_fork_at_next_edge = 0
+      is_movable_to_next_edge = 1
       routes = self.k.vehicle.get_route(rl_id)
-      if routes[-1] == 'connect':
-        is_fork_at_next_edge = 1
+      lane = self.k.vehicle.get_lane(rl_id)
+      if routes[-1] == 'connect' and lane != 2:
+        is_movable_to_next_edge = 0
 
       observation = [
         np.array([speed / speed_limit], dtype=np.float32),
@@ -264,7 +266,7 @@ class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
         leader_velocity.copy(),
         tailway.copy(),
         follower_velocity.copy(),
-        is_fork_at_next_edge
+        is_movable_to_next_edge,
       ]
       obs.update({rl_id: observation})
 

@@ -12,7 +12,7 @@ from ray.rllib.agents.ppo.ppo_policy import PPOTFPolicy
 python3 flow/examples/train.py multiagent_ring_highway --num_steps=500
 """
 EXP_TAG = "jams_at_fork"
-VERSION = 2
+VERSION = 3
 RENDER = False
 ENV_NAME = MultiAgentRingHighwayPOCommEnv
 # ENV_NAME = MultiAgentRingHighwayPONcomEnv
