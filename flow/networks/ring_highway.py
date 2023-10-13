@@ -296,21 +296,26 @@ class RingHighwayNetwork(Network):
       (x0, min_gap, bunching, lanes_distr, available_length, available_edges, initial_config) = cls._get_start_pos_util(initial_config, num_vehicles)
 
       length = net_params.additional_params["length"]
-      lanes = [0, 1, 2]
-      edges = {'bottom': 500, 'right': 500, 'top': 500, 'left': 300, 'merge':200}
-      increment = 40
+      lanes = [2, 1, 0] # place vehicle from inside
+      edges = {'bottom': 500, 'right': 1000, 'top': 1500, 'left': 1800, 'merge': 2000}
+      max_veh_per_lane = int(length / (VEHICLE_LENGTH * 5))
 
       car_count = 0
       startpositions, startlanes = [], []
 
-      for edge, e_len in edges.items():
-        x = 0
-        while x < e_len:
-          for lane in lanes:
-            if car_count > num_vehicles: break
-            startpositions.append((edge, x))
-            startlanes.append(lane)
-            car_count += 1
-          x += 40
+      for i, lane_id in enumerate(lanes):
+          if num_vehicles > max_veh_per_lane * (i+1):
+              for x in range(VEHICLE_LENGTH, 2000, (VEHICLE_LENGTH * 5)):
+                  edge = next((k for k, v in edges.items() if v >= x))
+                  startpositions.append((edge, x - edges[edge]))
+                  startlanes.append(lane_id)
+          else:
+              veh_num_to_set = num_vehicles - (max_veh_per_lane * i)
+              veh_space = int(length / veh_num_to_set)
+              for x in range(VEHICLE_LENGTH, 2000, veh_space):
+                  edge = next((k for k, v in edges.items() if v >= x))
+                  startpositions.append((edge, x - edges[edge]))
+                  startlanes.append(lane_id)
+              break
 
       return startpositions, startlanes
