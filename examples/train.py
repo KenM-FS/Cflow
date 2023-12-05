@@ -195,7 +195,7 @@ def train_rllib(submodule, flags):
         flow_params, n_cpus, n_rollouts,
         policy_graphs, policy_mapping_fn, policies_to_train, version)
 
-    ray.init(num_cpus=n_cpus + 1, object_store_memory=200 * 1024 * 1024)
+    ray.init(num_cpus=n_cpus + 1, object_store_memory=400 * 1024 * 1024)
     exp_config = {
         "run": alg_run,
         "env": gym_name,
