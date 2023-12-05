@@ -12,6 +12,7 @@ from flow.envs.multiagent.highway import MultiAgentHighwayPOEnv
 from flow.envs.multiagent.merge import MultiAgentMergePOEnv
 from flow.envs.multiagent.i210 import I210MultiEnv
 from flow.envs.multiagent.ring_highway import MultiAgentRingHighwayPOCommEnv, MultiAgentRingHighwayPONcomEnv
+from flow.envs.multiagent.full_obs import MultiAgentRingFOCommEnv
 
 __all__ = [
     'MultiEnv',
