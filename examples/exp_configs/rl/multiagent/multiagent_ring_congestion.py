@@ -15,10 +15,10 @@ from flow.networks import RingNetwork
 from flow.utils.registry import make_create_env
 
 EXP_TAG = "learningCAV"
-VERSION = 2
+VERSION = 3
 RENDER = False
-# ENV_NAME = MultiAgentRingHighwayPOCommEnv
-ENV_NAME = MultiAgentRingHighwayPONcomEnv
+ENV_NAME = MultiAgentRingHighwayPOCommEnv
+# ENV_NAME = MultiAgentRingHighwayPONcomEnv
 
 RATE_CAV = 0.3
 NUM_LANE = 3
@@ -73,7 +73,6 @@ flow_params = dict(
     sim=SumoParams(
         sim_step=0.1,
         render=RENDER,
-        emission_path='emission_data/'+exp_tag+'_v'+str(VERSION),
         overtake_right=True,
     ),
     env=EnvParams(
@@ -101,7 +100,7 @@ flow_params = dict(
 )
 
 
-create_env, env_name = make_create_env(params=flow_params, version=0)
+create_env, env_name = make_create_env(params=flow_params, version=VERSION-1)
 
 # Register as rllib env
 register_env(env_name, create_env)
