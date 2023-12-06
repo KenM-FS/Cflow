@@ -8,7 +8,7 @@ from flow.envs.multiagent import MultiAgentRingFOCommEnv
 from flow.networks import RingNetwork
 from flow.utils.registry import make_create_env
 
-EXP_TAG = "full_obs_test"
+EXP_TAG = "full_obs"
 VERSION = 1
 RENDER = False
 ENV_NAME = MultiAgentRingFOCommEnv
@@ -25,7 +25,6 @@ N_CPUS = 1
 NUM_TOTAL = 150
 
 num_cav = round(NUM_TOTAL * RATE_CAV)
-exp_tag = EXP_TAG + "_" + str(RATE_CAV) + "_" + str(num_cav)
 
 # We evenly distribute the automated vehicles in the network.
 set_lane = round(NUM_TOTAL / NUM_LANE)
@@ -58,14 +57,14 @@ for i in range(set_cav):
 
 
 flow_params = dict(
-    exp_tag=exp_tag,
+    exp_tag=EXP_TAG,
     env_name=ENV_NAME,
     network=RingNetwork,
     simulator='traci',
     sim=SumoParams(
         sim_step=0.1,
         render=RENDER,
-        emission_path='emission_data/'+exp_tag+'_v'+str(VERSION),
+        emission_path='emission_data/'+EXP_TAG+'_v'+str(VERSION),
         overtake_right=True,
     ),
     env=EnvParams(
@@ -93,7 +92,7 @@ flow_params = dict(
 )
 
 
-create_env, env_name = make_create_env(params=flow_params, version=VERSION)
+create_env, env_name = make_create_env(params=flow_params, version=VERSION-1)
 
 # Register as rllib env
 register_env(env_name, create_env)
