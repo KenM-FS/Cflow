@@ -15,7 +15,7 @@ from flow.networks import RingNetwork
 from flow.utils.registry import make_create_env
 
 EXP_TAG = "learningCAV"
-VERSION = 3
+VERSION = 4
 RENDER = False
 ENV_NAME = MultiAgentRingHighwayPOCommEnv
 # ENV_NAME = MultiAgentRingHighwayPONcomEnv
