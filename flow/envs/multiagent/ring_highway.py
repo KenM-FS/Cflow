@@ -33,10 +33,10 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
   def observation_space(self):
     obs_space = Tuple((
       Box(low=-1.,           high=1.,           shape=(1,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,))
+      Box(low=-float('inf'), high=float('inf'), shape=(3,)),
+      Box(low=-float('inf'), high=float('inf'), shape=(3,)),
+      Box(low=-float('inf'), high=float('inf'), shape=(3,)),
+      Box(low=-float('inf'), high=float('inf'), shape=(3,))
     ))
     return obs_space
 
@@ -78,28 +78,9 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
       speed = self.k.vehicle.get_speed(rl_id)
 
       headway = np.array(self.k.vehicle.get_lane_headways(rl_id), dtype=np.float32)
-      if headway.shape == (3,):
-        headway = np.append(headway, np.array([0.], dtype=np.float32))
-      elif headway.shape == (1,):
-        headway = np.append(headway, np.array([0., 0., 0.], dtype=np.float32))
-
       leader_velocity = np.array(self.k.vehicle.get_lane_leaders_speed(rl_id), dtype=np.float32)
-      if leader_velocity.shape == (3,):
-        leader_velocity = np.append(leader_velocity, np.array([0.], dtype=np.float32))
-      elif leader_velocity.shape == (1,):
-        leader_velocity = np.append(leader_velocity, np.array([0., 0., 0.], dtype=np.float32))
-
       tailway = np.array(self.k.vehicle.get_lane_tailways(rl_id), dtype=np.float32)
-      if tailway.shape == (3,):
-        tailway = np.append(tailway, np.array([0.], dtype=np.float32))
-      elif tailway.shape == (1,):
-        tailway = np.append(tailway, np.array([0., 0., 0.], dtype=np.float32))
-
       follower_velocity = np.array(self.k.vehicle.get_lane_followers_speed(rl_id), dtype=np.float32)
-      if follower_velocity.shape == (3,):
-        follower_velocity = np.append(follower_velocity, np.array([0.], dtype=np.float32))
-      elif follower_velocity.shape == (1,):
-        follower_velocity = np.append(follower_velocity, np.array([0., 0., 0.], dtype=np.float32))
 
       observation = [
         np.array([speed / speed_limit], dtype=np.float32),
@@ -130,15 +111,6 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
     # reward by average velocity of all vehicles
     eta_1 = 1
     reward_global = np.mean(vel) * eta_1
-    ## punish accelerations (should lead to reduce stop-and-go wave)
-    # eta_2 = 2
-    # accel_action = 0
-    # if len(rl_actions) > 0:
-    #   accel_action = np.array(list(rl_actions.values()))[:, 0]
-    # mean_actions = np.mean(np.abs(accel_action))
-    # accel_threshold = 0
-    # if mean_actions > accel_threshold:
-    #   reward_global += eta_2 * (accel_threshold - mean_actions)
 
     # reward by target velocity of each agent
     eta_3 = 1
@@ -149,6 +121,7 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
       rewards[rl_id] = max(reward_global + (speed/speed_limit)*100*eta_3, 0)
 
     return rewards
+
 class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
 
   def __init__(self, env_params, sim_params, network, simulator='traci'):
@@ -164,17 +137,17 @@ class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
   def observation_space(self):
     basic_obs = Tuple((
       Box(low=-1.,           high=1.,           shape=(1,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,))
+      Box(low=-float('inf'), high=float('inf'), shape=(3,)),
+      Box(low=-float('inf'), high=float('inf'), shape=(3,)),
+      Box(low=-float('inf'), high=float('inf'), shape=(3,)),
+      Box(low=-float('inf'), high=float('inf'), shape=(3,))
     ))
     obs_space = Tuple((
       Box(low=-1.,           high=1.,           shape=(1,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,)),
-      Box(low=-float('inf'), high=float('inf'), shape=(4,)),
+      Box(low=-float('inf'), high=float('inf'), shape=(3,)),
+      Box(low=-float('inf'), high=float('inf'), shape=(3,)),
+      Box(low=-float('inf'), high=float('inf'), shape=(3,)),
+      Box(low=-float('inf'), high=float('inf'), shape=(3,)),
       Tuple((basic_obs,) * self.initial_vehicles.num_rl_vehicles)
     ))
     return obs_space
@@ -210,28 +183,9 @@ class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
       speed = self.k.vehicle.get_speed(rl_id)
 
       headway = np.array(self.k.vehicle.get_lane_headways(rl_id), dtype=np.float32)
-      if headway.shape == (3,):
-        headway = np.append(headway, np.array([0.], dtype=np.float32))
-      elif headway.shape == (1,):
-        headway = np.append(headway, np.array([0., 0., 0.], dtype=np.float32))
-
       leader_velocity = np.array(self.k.vehicle.get_lane_leaders_speed(rl_id), dtype=np.float32)
-      if leader_velocity.shape == (3,):
-        leader_velocity = np.append(leader_velocity, np.array([0.], dtype=np.float32))
-      elif leader_velocity.shape == (1,):
-        leader_velocity = np.append(leader_velocity, np.array([0., 0., 0.], dtype=np.float32))
-
       tailway = np.array(self.k.vehicle.get_lane_tailways(rl_id), dtype=np.float32)
-      if tailway.shape == (3,):
-        tailway = np.append(tailway, np.array([0.], dtype=np.float32))
-      elif tailway.shape == (1,):
-        tailway = np.append(tailway, np.array([0., 0., 0.], dtype=np.float32))
-
       follower_velocity = np.array(self.k.vehicle.get_lane_followers_speed(rl_id), dtype=np.float32)
-      if follower_velocity.shape == (3,):
-        follower_velocity = np.append(follower_velocity, np.array([0.], dtype=np.float32))
-      elif follower_velocity.shape == (1,):
-        follower_velocity = np.append(follower_velocity, np.array([0., 0., 0.], dtype=np.float32))
 
       observation = [
         np.array([speed / speed_limit], dtype=np.float32),
@@ -250,10 +204,10 @@ class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
     #   np.array([(
     #   vel_mean / self.env_params.additional_params['target_velocity']
     #   )], dtype=np.float32),
-    #   np.array([9999, 9999, 9999, 9999], dtype=np.float32),
-    #   np.array([vel_mean, vel_mean, vel_mean, vel_mean], dtype=np.float32),
-    #   np.array([9999, 9999, 9999, 9999], dtype=np.float32),
-    #   np.array([vel_mean, vel_mean, vel_mean, vel_mean], dtype=np.float32)
+    #   np.array([9999, 9999, 9999], dtype=np.float32),
+    #   np.array([vel_mean, vel_mean, vel_mean], dtype=np.float32),
+    #   np.array([9999, 9999, 9999], dtype=np.float32),
+    #   np.array([vel_mean, vel_mean, vel_mean], dtype=np.float32)
     # )
     base_info = (
       np.array([0.], dtype=np.float16),
