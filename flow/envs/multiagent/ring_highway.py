@@ -246,14 +246,21 @@ class MultiAgentRingHighwayPOCommEnv(MultiAgentRingHighwayPONcomEnv):
       self.k.vehicle.get_speed(veh_id)
       for veh_id in self.k.vehicle.get_ids()
     ]))
+    # base_info = (
+    #   np.array([(
+    #   vel_mean / self.env_params.additional_params['target_velocity']
+    #   )], dtype=np.float32),
+    #   np.array([9999, 9999, 9999, 9999], dtype=np.float32),
+    #   np.array([vel_mean, vel_mean, vel_mean, vel_mean], dtype=np.float32),
+    #   np.array([9999, 9999, 9999, 9999], dtype=np.float32),
+    #   np.array([vel_mean, vel_mean, vel_mean, vel_mean], dtype=np.float32)
+    # )
     base_info = (
-      np.array([(
-      vel_mean / self.env_params.additional_params['target_velocity']
-      )], dtype=np.float32),
-      np.array([9999, 9999, 9999, 9999], dtype=np.float32),
-      np.array([vel_mean, vel_mean, vel_mean, vel_mean], dtype=np.float32),
-      np.array([9999, 9999, 9999, 9999], dtype=np.float32),
-      np.array([vel_mean, vel_mean, vel_mean, vel_mean], dtype=np.float32)
+      np.array([0.], dtype=np.float16),
+      np.array([0., 0., 0.], dtype=np.float16),
+      np.array([0., 0., 0.], dtype=np.float16),
+      np.array([0., 0., 0.], dtype=np.float16),
+      np.array([0., 0., 0.], dtype=np.float16)
     )
     states = {}
     for rl_id in rl_ids:
