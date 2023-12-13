@@ -14,9 +14,9 @@ from flow.envs.multiagent import MultiAgentRingHighwayPONcomEnv
 from flow.networks import RingNetwork
 from flow.utils.registry import make_create_env
 
-EXP_TAG = "platooning_test"
+EXP_TAG = "platooning"
 VERSION = 1
-RENDER = True
+RENDER = False
 ENV_NAME = MultiAgentRingHighwayPOCommEnv
 # ENV_NAME = MultiAgentRingHighwayPONcomEnv
 
