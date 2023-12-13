@@ -112,13 +112,17 @@ class MultiAgentRingHighwayPONcomEnv(MultiEnv):
     eta_1 = 1
     reward_global = np.mean(vel) * eta_1
 
-    # reward by target velocity of each agent
+    # reward by target velocity of each agent and distance from the leader
     eta_3 = 1
+    eta_4 = 1
     for rl_id in self.k.vehicle.get_rl_ids():
       edge = self.k.vehicle.get_edge(rl_id)
       speed_limit = self.k.network.speed_limit(edge)
       speed = self.k.vehicle.get_speed(rl_id)
-      rewards[rl_id] = max(reward_global + (speed/speed_limit)*100*eta_3, 0)
+
+      dist2leader = self.k.vehicle.get_headway(rl_id)
+      if dist2leader == 0: dist2leader = 100
+      rewards[rl_id] = max(reward_global + (speed/speed_limit)*100*eta_3 + (100 / dist2leader), 0)
 
     return rewards
 
