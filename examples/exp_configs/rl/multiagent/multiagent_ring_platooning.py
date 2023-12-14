@@ -33,7 +33,6 @@ N_CPUS = 2
 NUM_TOTAL = 150
 
 num_cav = round(NUM_TOTAL * RATE_CAV)
-exp_tag = EXP_TAG + "_" + str(RATE_CAV) + "_" + str(num_cav)
 
 # We evenly distribute the automated vehicles in the network.
 set_lane = round(NUM_TOTAL / NUM_LANE)
@@ -66,7 +65,7 @@ for i in range(set_cav):
 
 
 flow_params = dict(
-    exp_tag=exp_tag,
+    exp_tag=EXP_TAG,
     env_name=ENV_NAME,
     network=RingNetwork,
     simulator='traci',
